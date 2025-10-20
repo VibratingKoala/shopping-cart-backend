@@ -7,6 +7,8 @@ module.exports = {
   extends: [
     'eslint:recommended'
   ],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module'
@@ -24,13 +26,19 @@ module.exports = {
     
     // Best practices
     'eqeqeq': ['error', 'always'],
-    'no-eval': 'error'
+    'no-eval': 'error',
+    
+    // Allow unused vars in interfaces and function signatures
+    'no-unused-vars': ['error', { 
+      'argsIgnorePattern': '^_',
+      'varsIgnorePattern': '^_'
+    }],
+    '@typescript-eslint/no-unused-vars': 'off'
   },
   ignorePatterns: [
-    '**/*.ts',
-    '**/*.d.ts',
     'dist/**',
     'coverage/**',
-    'node_modules/**'
+    'node_modules/**',
+    '*.js'
   ]
 }

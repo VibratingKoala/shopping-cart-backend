@@ -4,10 +4,61 @@ import { createAddItemToCartUseCase } from '../../application/use-cases/AddItemT
 import { createGetCartUseCase } from '../../application/use-cases/GetCart'
 import { createCheckoutCartUseCase } from '../../application/use-cases/CheckoutCart'
 
+// HTTP Status constants
+const HTTP_STATUS = {
+  OK: 200,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500
+} as const
+
 export interface CartController {
-  addItem(req: Request, res: Response): Promise<void>
-  getCart(req: Request, res: Response): Promise<void>
-  checkout(req: Request, res: Response): Promise<void>
+  addItem(_req: Request, _res: Response): Promise<void>
+  getCart(_req: Request, _res: Response): Promise<void>
+  checkout(_req: Request, _res: Response): Promise<void>
+}
+
+// Helper function to handle common error responses
+const handleError = (res: Response, error: string, isNotFound = false): void => {
+  const status = isNotFound ? HTTP_STATUS.NOT_FOUND : HTTP_STATUS.BAD_REQUEST
+  res.status(status).json({ error })
+}
+
+// Helper function to handle server errors
+const handleServerError = (res: Response, error: unknown, operation: string): void => {
+  console.error(`Error in ${operation}:`, error)
+  res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+    error: 'Internal server error'
+  })
+}
+
+// Validation helper for add item request
+const validateAddItemRequest = (body: unknown): string | null => {
+  if (!body || typeof body !== 'object') {
+    return 'Request body must be an object'
+  }
+
+  const { productId, quantity, unitPrice } = body as Record<string, unknown>
+
+  if (!productId || !quantity || !unitPrice) {
+    return 'Missing required fields: productId, quantity, unitPrice'
+  }
+
+  if (typeof quantity !== 'number' || quantity <= 0) {
+    return 'Quantity must be a positive number'
+  }
+
+  if (typeof unitPrice !== 'object' || !unitPrice ||
+      !('amount' in unitPrice) || !('currency' in unitPrice)) {
+    return 'Unit price must be an object with amount and currency'
+  }
+
+  const priceObj = unitPrice as { amount: unknown; currency: unknown }
+  if (typeof priceObj.amount !== 'number' || priceObj.amount <= 0) {
+    return 'Unit price amount must be a positive number'
+  }
+
+  return null
 }
 
 export const createCartController = (repository: InMemoryCartRepository): CartController => {
@@ -19,38 +70,14 @@ export const createCartController = (repository: InMemoryCartRepository): CartCo
     async addItem(req: Request, res: Response): Promise<void> {
       try {
         const { cartId } = req.params
+        const validationError = validateAddItemRequest(req.body)
+
+        if (validationError) {
+          res.status(HTTP_STATUS.BAD_REQUEST).json({ error: validationError })
+          return
+        }
+
         const { productId, quantity, unitPrice } = req.body
-
-        // Basic validation
-        if (!productId || !quantity || !unitPrice) {
-          res.status(400).json({
-            error: 'Missing required fields: productId, quantity, unitPrice'
-          })
-          return
-        }
-
-        if (typeof quantity !== 'number' || quantity <= 0) {
-          res.status(400).json({
-            error: 'Quantity must be a positive number'
-          })
-          return
-        }
-
-        // Handle unitPrice as object { amount, currency }
-        if (typeof unitPrice !== 'object' || !unitPrice.amount || !unitPrice.currency) {
-          res.status(400).json({
-            error: 'Unit price must be an object with amount and currency'
-          })
-          return
-        }
-
-        if (typeof unitPrice.amount !== 'number' || unitPrice.amount <= 0) {
-          res.status(400).json({
-            error: 'Unit price amount must be a positive number'
-          })
-          return
-        }
-
         const result = await addItemUseCase({
           cartId,
           productId,
@@ -60,79 +87,53 @@ export const createCartController = (repository: InMemoryCartRepository): CartCo
         })
 
         if (result.success) {
-          res.status(200).json({
+          res.status(HTTP_STATUS.OK).json({
             message: 'Item added successfully',
             cart: result.cart
           })
         } else {
-          res.status(400).json({
-            error: result.error
-          })
+          handleError(res, result.error || 'Unknown error')
         }
       } catch (error) {
-        console.error('Error in addItem:', error)
-        res.status(500).json({
-          error: 'Internal server error'
-        })
+        handleServerError(res, error, 'addItem')
       }
     },
 
     async getCart(req: Request, res: Response): Promise<void> {
       try {
         const { cartId } = req.params
-
         const result = await getCartUseCase({ cartId })
 
         if (result.success) {
-          // Return cart data directly instead of wrapped in cart property
-          res.status(200).json(result.cart)
-        } else {
-          if (result.error === 'Cart not found') {
-            res.status(404).json({
-              error: result.error
-            })
-          } else {
-            res.status(400).json({
-              error: result.error
-            })
-          }
+          res.status(HTTP_STATUS.OK).json(result.cart)
+          return
         }
+
+        const isNotFound = result.error === 'Cart not found'
+        handleError(res, result.error || 'Unknown error', isNotFound)
       } catch (error) {
-        console.error('Error in getCart:', error)
-        res.status(500).json({
-          error: 'Internal server error'
-        })
+        handleServerError(res, error, 'getCart')
       }
     },
 
     async checkout(req: Request, res: Response): Promise<void> {
       try {
         const { cartId } = req.params
-
         const result = await checkoutUseCase({ cartId })
 
         if (result.success) {
-          res.status(200).json({
+          res.status(HTTP_STATUS.OK).json({
             orderId: result.orderId,
             total: result.total,
             items: result.items
           })
-        } else {
-          if (result.error === 'Cart not found') {
-            res.status(404).json({
-              error: result.error
-            })
-          } else {
-            res.status(400).json({
-              error: result.error
-            })
-          }
+          return
         }
+
+        const isNotFound = result.error === 'Cart not found'
+        handleError(res, result.error || 'Unknown error', isNotFound)
       } catch (error) {
-        console.error('Error in checkout:', error)
-        res.status(500).json({
-          error: 'Internal server error'
-        })
+        handleServerError(res, error, 'checkout')
       }
     }
   }

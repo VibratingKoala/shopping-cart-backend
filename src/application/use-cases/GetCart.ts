@@ -22,7 +22,7 @@ export const createGetCartUseCase = (cartRepository: CartRepository) => {
       }
 
       let cart = await cartRepository.findById(request.cartId)
-      
+
       if (!cart) {
         // Create an empty cart if it doesn't exist
         const { createCart } = await import('../../domain/entities/Cart')

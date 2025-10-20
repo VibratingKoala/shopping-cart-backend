@@ -5,8 +5,8 @@
  * Handles PowerShell execution policy and dependency installation
  */
 
-const { execSync } = require('child_process');
-const path = require('path');
+const { execSync } = require('node:child_process');
+const path = require('node:path');
 
 console.log('🛒 Shopping Cart Backend Setup');
 console.log('================================\n');
@@ -17,10 +17,12 @@ try {
     console.log('📋 Checking PowerShell execution policy...');
     try {
       execSync('powershell -Command "Get-ExecutionPolicy"', { stdio: 'pipe' });
-    } catch (error) {
+    } catch (policyError) {
       console.log('⚠️  PowerShell execution policy may be restricted.');
       console.log('   Please run this command in an Administrator PowerShell:');
       console.log('   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser\n');
+      // Log the specific error for debugging
+      console.log('   Policy check error:', policyError.message);
     }
   }
 

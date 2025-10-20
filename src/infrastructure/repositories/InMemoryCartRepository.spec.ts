@@ -13,7 +13,7 @@ describe('InMemoryCartRepository', () => {
 
   it('saves and retrieves cart', async () => {
     const cart = createCart('cart-1')
-    
+
     await repository.save(cart)
     const retrievedCart = await repository.findById('cart-1')
 
@@ -86,7 +86,7 @@ describe('InMemoryCartRepository', () => {
 
   it('handles concurrent operations', async () => {
     const cart = createCart('cart-1')
-    
+
     // Simulate concurrent saves
     const promises = [
       repository.save(cart),

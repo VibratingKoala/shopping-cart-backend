@@ -35,7 +35,7 @@ export const createCheckoutCartUseCase = (cartRepository: CartRepository) => {
       }
 
       const cart = await cartRepository.findById(request.cartId)
-      
+
       if (!cart) {
         return {
           success: false,

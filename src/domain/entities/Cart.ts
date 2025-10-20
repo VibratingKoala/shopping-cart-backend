@@ -11,7 +11,7 @@ export const createCartItem = (productId: ProductId, quantity: number, unitPrice
   if (!Number.isInteger(quantity) || quantity <= 0) {
     throw new Error('Cart item quantity must be a positive integer')
   }
-  
+
   return {
     productId,
     quantity,
@@ -40,9 +40,10 @@ export const createCart = (id: string): Cart => {
     throw new Error('Cart ID must be a non-empty string')
   }
 
+  const trimmedId = id.trim()
   const now = new Date()
   return {
-    id: id.trim(),
+    id: trimmedId,
     items: [],
     createdAt: now,
     updatedAt: now
@@ -60,7 +61,7 @@ export const addItemToCart = (cart: Cart, item: CartItem): Cart => {
     // Update existing item quantity
     const existingItem = cart.items[existingItemIndex]
     const updatedItem = updateItemQuantity(existingItem, existingItem.quantity + item.quantity)
-    
+
     const newItems = [...cart.items]
     newItems[existingItemIndex] = updatedItem
 

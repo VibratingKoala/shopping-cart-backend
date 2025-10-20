@@ -16,8 +16,8 @@ RUN npm ci --include=dev && npm cache clean --force
 COPY . .
 
 # Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001 -G nodejs
-RUN chown -R nodejs:nodejs /app
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001 -G nodejs && \
+    chown -R nodejs:nodejs /app
 USER nodejs
 
 # Default stage for running tests
