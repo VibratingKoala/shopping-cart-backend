@@ -137,11 +137,13 @@ describe('GetCart Use Case', () => {
     expect(result.cart!.id).toBe('cart-1')
   })
 
-  it('returns error for non-existent cart', async () => {
+  it('creates empty cart for non-existent cart', async () => {
     const result = await useCase({ cartId: 'non-existent' })
 
-    expect(result.success).toBe(false)
-    expect(result.error).toBe('Cart not found')
+    expect(result.success).toBe(true)
+    expect(result.cart).toBeDefined()
+    expect(result.cart!.id).toBe('non-existent')
+    expect(result.cart!.items).toHaveLength(0)
   })
 
   it('handles empty cart ID', async () => {

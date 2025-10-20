@@ -19,10 +19,10 @@ try {
   const server = app.listen(PORT, () => {
     console.log(`Shopping Cart API server running on port ${PORT}`)
     console.log(`Health check: http://localhost:${PORT}/health`)
-    console.log(`API endpoints:`)
-    console.log(`  POST /api/carts/:cartId/items - Add item to cart`)
-    console.log(`  GET  /api/carts/:cartId - Get cart`)
-    console.log(`  POST /api/carts/:cartId/checkout - Checkout cart`)
+    console.log('API endpoints:')
+    console.log('  POST /api/carts/:cartId/items - Add item to cart')
+    console.log('  GET  /api/carts/:cartId - Get cart')
+    console.log('  POST /api/carts/:cartId/checkout - Checkout cart')
   })
 
   server.on('error', (error) => {

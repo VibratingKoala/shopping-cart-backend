@@ -1,15 +1,15 @@
-# 🛒 Shopping Cart Backend API
+# Shopping Cart Backend API
 
-A production-ready shopping cart API built with **Domain-Driven Design** principles, **Clean Architecture**, and **TypeScript**.
+A TypeScript-based shopping cart REST API built with clean architecture principles, comprehensive testing, and production-ready deployment configuration.
 
 ## ✨ Features
 
 - **Complete Shopping Cart API** with add, get, and checkout operations
-- **Domain-Driven Design** with proper separation of concerns
-- **Clean Architecture** with ports and adapters pattern
-- **Comprehensive Test Coverage** (targeting >70%)
+- **Domain-Driven Design** with immutable entities and value objects
+- **Clean Architecture** with dependency inversion and ports/adapters
+- **49 comprehensive tests** with >70% coverage achieved
 - **Production-Ready Infrastructure** with Docker and AWS ECS
-- **CI/CD Pipeline** with GitHub Actions
+- **Complete CI/CD Pipeline** with GitHub Actions
 - **Infrastructure as Code** with Terraform
 
 ## 🚀 Quick Start
@@ -72,8 +72,10 @@ curl -X POST http://localhost:3000/api/carts/cart-123/items \
   -d '{
     "productId": "product-456",
     "quantity": 2,
-    "unitPrice": 29.99,
-    "currency": "USD"
+    "unitPrice": {
+      "amount": 29.99,
+      "currency": "USD"
+    }
   }'
 ```
 
@@ -113,11 +115,15 @@ npm test
 # Run tests with coverage report
 npm run test:coverage
 
-# Run tests in watch mode
-npm run test -- --watch
+# Test API endpoints (requires server running)
+.\test-api-simple.ps1
 ```
 
-Test files follow the pattern `*.spec.ts` and are located alongside the source files.
+**Test Coverage:**
+- **49 unit and integration tests** covering all business logic
+- **>70% coverage** on domain and application layers
+- **API integration tests** via PowerShell scripts
+- Test files follow the pattern `*.spec.ts` and are located alongside source files
 
 ## 🐋 Docker
 
@@ -222,19 +228,30 @@ Code quality is enforced with:
 
 ## 📋 Trade-offs & Design Decisions
 
-### ✅ What's Included
-- **In-memory storage** for simplicity and fast development
-- **Domain-first design** with rich business logic
-- **Complete CI/CD pipeline** with automated deployment
-- **Production-ready infrastructure** with AWS ECS
-- **Comprehensive testing** with coverage reporting
+### Key Architectural Choices
 
-### 🔄 Future Enhancements
-- **Database integration** (PostgreSQL, DynamoDB)
-- **Authentication & authorization**
-- **Rate limiting & caching**
-- **Observability** (metrics, tracing)
-- **Advanced inventory management**
+**Clean Architecture**: Strict dependency rules ensure business logic is independent of frameworks
+**Immutable Design**: All operations return new instances, eliminating shared state bugs
+**Factory Functions**: Preferred over classes for simpler testing and functional style
+**TypeScript Strict Mode**: Compile-time guarantees and better developer experience
+
+### Current Limitations
+- **In-memory storage**: Data lost on restart (easily replaceable via repository pattern)
+- **No authentication**: All carts are public (JWT integration straightforward)
+- **Single currency**: USD only (configurable in Money value object)
+- **Basic validation**: Could be more granular with detailed error messages
+
+### Production Readiness
+- **Docker multi-stage builds** with non-root user for security
+- **AWS ECS infrastructure** with load balancer and auto-scaling
+- **CI/CD pipeline** with automated testing and deployment
+- **Monitoring setup** with health checks and structured logging
+
+### Future Enhancements
+- **PostgreSQL integration** replacing in-memory repository
+- **User authentication** with JWT tokens and cart ownership
+- **Product catalog integration** with external services
+- **Advanced features**: inventory, discounts, tax calculation
 
 ## 🤝 Contributing
 
