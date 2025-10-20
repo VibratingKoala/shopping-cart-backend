@@ -5,7 +5,9 @@ export type Money = {
 
 export const createMoney = (amount: number, currency = 'USD'): Money => {
   if (!Number.isFinite(amount) || amount < 0) throw new Error('Money amount must be a non-negative finite number')
-  return { amount, currency }
+  // Round to 2 decimal places to avoid floating point precision issues
+  const roundedAmount = Math.round(amount * 100) / 100
+  return { amount: roundedAmount, currency }
 }
 
 export const addMoney = (a: Money, b: Money): Money => {
