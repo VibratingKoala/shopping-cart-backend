@@ -1,56 +1,14 @@
 # Shopping Cart Backend API
 
-A TypeScript-based shopping cart REST API built with clean architecture principles, comprehensive testing, and production-ready deployment configuration.
+A TypeScript REST API for managing shopping carts, built with clean architecture principles and modern development practices. Features thorough testing, domain-driven design, and production-ready infrastructure automation.
 
-## ✨ Features
+## ✨ Key Features
 
-- **Complete Shopping Cart API** with add, get, and checkout operations
-- **Domain-Driven Design** with immutable entities and value objects
-- **Clean Architecture** with dependency inversion and ports/adapters
-- **49 comprehensive tests** with >70% coverage achieved
-- **Production-Ready Infrastructure** with Docker and AWS ECS
-- **Complete CI/CD Pipeline** with GitHub Actions
-- **Infrastructure as Code** with Terraform
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Setup (Windows PowerShell)
-
-If you encounter PowerShell execution policy issues, run this first as Administrator:
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-Then install dependencies:
-```powershell
-npm install
-```
-
-### Development Commands
-
-```bash
-# Run tests
-npm test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run linter
-npm run lint
-
-# Build for production
-npm run build
-
-# Start development server (with hot reload)
-npm run dev
-
-# Start production server
-npm start
-```
+- **Clean Architecture**: Strict separation of concerns with dependency inversion
+- **Domain-Driven Design**: Rich domain models with enforced business rules
+- **Thorough Testing**: 55+ tests covering business logic and integrations
+- **Production Ready**: Docker containers, CI/CD pipelines, and AWS infrastructure
+- **Type Safety**: Full TypeScript implementation with strict mode enabled
 
 ## 📡 API Endpoints
 
@@ -59,15 +17,16 @@ npm start
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/health` | Health check |
-| POST | `/api/carts/:cartId/items` | Add item to cart |
-| GET | `/api/carts/:cartId` | Get cart contents |
-| POST | `/api/carts/:cartId/checkout` | Checkout cart |
+| POST | `/api/cart/:sessionId/items` | Add product to cart |
+| GET | `/api/cart/:sessionId` | Get cart contents |
+| POST | `/api/cart/:sessionId/checkout` | Checkout cart |
+| DELETE | `/api/cart/:sessionId/items/:itemId` | Remove item from cart |
 
 ### Example Usage
 
 **Add item to cart:**
 ```bash
-curl -X POST http://localhost:3000/api/carts/cart-123/items \
+curl -X POST http://localhost:3000/api/cart/session-123/items \
   -H "Content-Type: application/json" \
   -d '{
     "productId": "product-456",
@@ -79,14 +38,9 @@ curl -X POST http://localhost:3000/api/carts/cart-123/items \
   }'
 ```
 
-**Get cart:**
+**Remove item from cart:**
 ```bash
-curl http://localhost:3000/api/carts/cart-123
-```
-
-**Checkout cart:**
-```bash
-curl -X POST http://localhost:3000/api/carts/cart-123/checkout
+curl -X DELETE http://localhost:3000/api/cart/session-123/items/product-456
 ```
 
 ## 🏗️ Architecture
@@ -106,7 +60,7 @@ curl -X POST http://localhost:3000/api/carts/cart-123/checkout
 
 ## 🧪 Testing
 
-The project includes comprehensive test coverage:
+The project includes solid test coverage:
 
 ```bash
 # Run all tests
@@ -120,10 +74,10 @@ npm run test:coverage
 ```
 
 **Test Coverage:**
-- **49 unit and integration tests** covering all business logic
-- **>70% coverage** on domain and application layers
-- **API integration tests** via PowerShell scripts
-- Test files follow the pattern `*.spec.ts` and are located alongside source files
+- **55 tests** covering domain logic and business rules
+- **70%+ coverage** on critical business components
+- **Integration tests** for API endpoints and repository interactions
+- Test files use the pattern `*.spec.ts` alongside source code for maintainability
 
 ## 🐋 Docker
 
@@ -173,11 +127,10 @@ terraform apply
 
 ### CI/CD Pipeline
 
-GitHub Actions workflows handle:
-- **Continuous Integration**: Testing, linting, security scanning
-- **Continuous Deployment**: Docker image building, infrastructure updates, service deployment
-
-Workflows are triggered on pushes to `main` and pull requests.
+Automated workflows handle:
+- **Code Quality**: Testing, linting, and security scanning
+- **Deployment**: Docker image building and infrastructure management
+- **Integration**: Automatic validation on pull requests and main branch updates
 
 ## 📁 Project Structure
 
@@ -198,60 +151,60 @@ shopping-cart-backend/
 │   ├── docker/                # Docker configurations
 │   └── terraform/             # Infrastructure as Code
 ├── .github/workflows/         # CI/CD pipelines
-└── tests covered >70%         # Comprehensive test suite
+└── tests covering 70%+          # Full test suite
 ```
 
-## 🔧 Configuration
+## 🔧 Development Setup
 
 ### Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `NODE_ENV` | Environment | `development` |
+| `NODE_ENV` | Runtime environment | `development` |
 | `PORT` | Server port | `3000` |
 
-### ESLint & Prettier
+### Code Quality Tools
 
-Code quality is enforced with:
-- ESLint with TypeScript rules
-- Prettier for consistent formatting
-- Git hooks for pre-commit validation
+The project maintains high code quality with:
+- ESLint with TypeScript-specific rules
+- Prettier for consistent code formatting
+- Pre-commit hooks for automated validation
 
-## 🚦 Development Workflow
+## � Development Workflow
 
-1. **Create feature branch**: `git checkout -b feature/your-feature`
-2. **Write tests first**: Follow TDD principles
-3. **Implement feature**: Maintain clean architecture
-4. **Run quality checks**: `npm run lint && npm test`
-5. **Create pull request**: CI pipeline will validate changes
-6. **Merge to main**: Triggers automated deployment
+1. **Branch creation**: `git checkout -b feature/feature-name`
+2. **Test-driven development**: Write tests before implementation
+3. **Implementation**: Follow clean architecture principles
+4. **Quality assurance**: `npm run lint && npm test`
+5. **Pull request**: Automated validation via CI pipeline
+6. **Deployment**: Automatic deployment on merge to main
 
-## 📋 Trade-offs & Design Decisions
+## � Architecture & Design Decisions
 
-### Key Architectural Choices
+### Core Principles
 
-**Clean Architecture**: Strict dependency rules ensure business logic is independent of frameworks
-**Immutable Design**: All operations return new instances, eliminating shared state bugs
-**Factory Functions**: Preferred over classes for simpler testing and functional style
-**TypeScript Strict Mode**: Compile-time guarantees and better developer experience
+**Clean Architecture**: Business logic remains independent of external frameworks and databases
+**Immutable Operations**: All data modifications return new instances, preventing side effects
+**Functional Style**: Factory functions preferred over classes for simpler composition
+**Type Safety**: Strict TypeScript configuration catches errors at compile time
 
-### Current Limitations
-- **In-memory storage**: Data lost on restart (easily replaceable via repository pattern)
-- **No authentication**: All carts are public (JWT integration straightforward)
-- **Single currency**: USD only (configurable in Money value object)
-- **Basic validation**: Could be more granular with detailed error messages
+### Current Scope
+- **Storage**: In-memory persistence (easily swappable via repository pattern)
+- **Security**: Public cart access (ready for authentication layer)
+- **Currency**: USD support (extensible to multiple currencies)
+- **Validation**: Core business rules (expandable for complex scenarios)
 
-### Production Readiness
-- **Docker multi-stage builds** with non-root user for security
-- **AWS ECS infrastructure** with load balancer and auto-scaling
-- **CI/CD pipeline** with automated testing and deployment
-- **Monitoring setup** with health checks and structured logging
+### Production Features
+- **Container Security**: Multi-stage Docker builds with non-root execution
+- **Cloud Infrastructure**: Scalable AWS ECS with load balancing
+- **Automation**: Full CI/CD pipeline with testing and deployment
+- **Observability**: Health checks and structured logging integration
 
-### Future Enhancements
-- **PostgreSQL integration** replacing in-memory repository
-- **User authentication** with JWT tokens and cart ownership
-- **Product catalog integration** with external services
-- **Advanced features**: inventory, discounts, tax calculation
+### Growth Path
+- **Database**: PostgreSQL replacement for in-memory storage
+- **Authentication**: JWT-based user sessions and cart ownership
+- **Catalog Integration**: External product service connectivity
+- **Enhanced Features**: Inventory management, promotions, tax calculations
 
 ## 🤝 Contributing
 

@@ -66,14 +66,14 @@ export const createCheckoutCartUseCase = (cartRepository: CartRepository) => {
         }
       }))
 
-      // In a real implementation, this would:
+      // In production, this would:
       // - Process payment
       // - Create order record
       // - Update inventory
       // - Send confirmation email
       // - Clear/archive the cart
 
-      // For now, we'll just delete the cart to simulate checkout completion
+      // For demo purposes, we delete the cart to simulate checkout completion
       await cartRepository.delete(request.cartId)
 
       return {

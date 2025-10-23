@@ -2,17 +2,17 @@
 
 ## System Architecture
 
-This shopping cart API follows **Clean Architecture** principles, organizing code in layers with clear dependency rules and separation of concerns.
+This shopping cart API uses **Clean Architecture** patterns, organizing code in layers with clear dependency rules and separation of concerns.
 
 ## Layer Structure
 
 ```
 src/
-├── domain/              # Enterprise Business Rules
+├── domain/              # Core Business Rules
 │   ├── entities/        # Business objects (Cart, CartItem)
 │   └── value-objects/   # Value types (Money, ProductId)
 ├── application/         # Application Business Rules  
-│   ├── use-cases/       # Use case implementations
+│   ├── use-cases/       # Business workflows
 │   └── ports/           # Interface definitions
 └── infrastructure/      # Interface Adapters & Frameworks
     ├── repositories/    # Data persistence
@@ -91,7 +91,7 @@ interface CartRepository {
 ```
 - Abstracts data persistence
 - Enables easy testing with mocks
-- Supports multiple storage implementations
+- Allows multiple storage backends
 
 ### Factory Functions
 ```typescript
@@ -174,7 +174,7 @@ Single Container → ECS Service → ECS with Auto Scaling → Multi-AZ Deployme
 
 ## Security Considerations
 
-### Current Implementation
+### Current Setup
 - Basic input validation
 - CORS headers for development
 - No authentication (public API)
@@ -271,7 +271,7 @@ npm run test:coverage  # Coverage report
 #### Phase 1: Production Ready
 - Add PostgreSQL database
 - Implement user authentication
-- Add comprehensive logging
+- Add detailed logging
 - Deploy to AWS ECS
 
 #### Phase 2: Scale & Monitor  

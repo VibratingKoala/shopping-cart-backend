@@ -19,7 +19,7 @@ try {
 Write-Host ""
 Write-Host "2. Testing Get Cart (should be empty)..." -ForegroundColor Yellow
 try {
-    $cart = Invoke-RestMethod -Uri "http://localhost:3000/api/carts/test-cart-1" -Method GET
+    $cart = Invoke-RestMethod -Uri "http://localhost:3000/api/cart/test-cart-1" -Method GET
     Write-Host "OK Cart retrieved successfully" -ForegroundColor Green
     Write-Host "   Cart ID: $($cart.id)" -ForegroundColor Cyan
     Write-Host "   Items: $($cart.items.Count)" -ForegroundColor Cyan
@@ -41,7 +41,7 @@ $addItemBody = @{
 } | ConvertTo-Json
 
 try {
-    $addResult = Invoke-RestMethod -Uri "http://localhost:3000/api/carts/test-cart-1/items" -Method POST -Body $addItemBody -ContentType "application/json"
+    $addResult = Invoke-RestMethod -Uri "http://localhost:3000/api/cart/test-cart-1/items" -Method POST -Body $addItemBody -ContentType "application/json"
     Write-Host "OK Item added successfully" -ForegroundColor Green
     Write-Host "   Message: $($addResult.message)" -ForegroundColor Cyan
 } catch {
@@ -52,7 +52,7 @@ try {
 Write-Host ""
 Write-Host "4. Testing Get Cart (should have items)..." -ForegroundColor Yellow
 try {
-    $cartWithItems = Invoke-RestMethod -Uri "http://localhost:3000/api/carts/test-cart-1" -Method GET
+    $cartWithItems = Invoke-RestMethod -Uri "http://localhost:3000/api/cart/test-cart-1" -Method GET
     Write-Host "OK Cart with items retrieved successfully" -ForegroundColor Green
     Write-Host "   Cart ID: $($cartWithItems.id)" -ForegroundColor Cyan
     Write-Host "   Items: $($cartWithItems.items.Count)" -ForegroundColor Cyan
@@ -81,8 +81,9 @@ $addItem2Body = @{
 } | ConvertTo-Json
 
 try {
-    $addResult2 = Invoke-RestMethod -Uri "http://localhost:3000/api/carts/test-cart-1/items" -Method POST -Body $addItem2Body -ContentType "application/json"
+    $addResult2 = Invoke-RestMethod -Uri "http://localhost:3000/api/cart/test-cart-1/items" -Method POST -Body $addItem2Body -ContentType "application/json"
     Write-Host "OK Second item added successfully" -ForegroundColor Green
+    Write-Host "   Message: $($addResult2.message)" -ForegroundColor Cyan
 } catch {
     Write-Host "X Add second item failed: $($_.Exception.Message)" -ForegroundColor Red
 }
@@ -91,7 +92,7 @@ try {
 Write-Host ""
 Write-Host "6. Testing Checkout..." -ForegroundColor Yellow
 try {
-    $checkoutResult = Invoke-RestMethod -Uri "http://localhost:3000/api/carts/test-cart-1/checkout" -Method POST
+    $checkoutResult = Invoke-RestMethod -Uri "http://localhost:3000/api/cart/test-cart-1/checkout" -Method POST
     Write-Host "OK Checkout successful" -ForegroundColor Green
     Write-Host "   Order ID: $($checkoutResult.orderId)" -ForegroundColor Cyan
     Write-Host "   Total: $([math]::Round($checkoutResult.total.amount, 2)) $($checkoutResult.total.currency)" -ForegroundColor Cyan
@@ -104,7 +105,7 @@ try {
 Write-Host ""
 Write-Host "7. Testing Get Cart After Checkout (should be empty)..." -ForegroundColor Yellow
 try {
-    $emptyCart = Invoke-RestMethod -Uri "http://localhost:3000/api/carts/test-cart-1" -Method GET
+    $emptyCart = Invoke-RestMethod -Uri "http://localhost:3000/api/cart/test-cart-1" -Method GET
     Write-Host "OK Cart after checkout retrieved" -ForegroundColor Green
     Write-Host "   Items: $($emptyCart.items.Count)" -ForegroundColor Cyan
     Write-Host "   Total: $([math]::Round($emptyCart.total.amount, 2)) $($emptyCart.total.currency)" -ForegroundColor Cyan

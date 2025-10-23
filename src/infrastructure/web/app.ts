@@ -30,10 +30,11 @@ export const createApp = () => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() })
   })
 
-  // Cart routes
-  app.post('/api/carts/:cartId/items', cartController.addItem)
-  app.get('/api/carts/:cartId', cartController.getCart)
-  app.post('/api/carts/:cartId/checkout', cartController.checkout)
+  // Cart API routes
+  app.post('/api/cart/:sessionId/items', cartController.addItem)
+  app.get('/api/cart/:sessionId', cartController.getCart)
+  app.post('/api/cart/:sessionId/checkout', cartController.checkout)
+  app.delete('/api/cart/:sessionId/items/:itemId', cartController.removeItem)
 
   // Error handling middleware
   app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {

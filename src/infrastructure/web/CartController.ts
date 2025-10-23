@@ -3,6 +3,7 @@ import { InMemoryCartRepository } from '../repositories/InMemoryCartRepository'
 import { createAddItemToCartUseCase } from '../../application/use-cases/AddItemToCart'
 import { createGetCartUseCase } from '../../application/use-cases/GetCart'
 import { createCheckoutCartUseCase } from '../../application/use-cases/CheckoutCart'
+import { createRemoveItemFromCartUseCase } from '../../application/use-cases/RemoveItemFromCart'
 
 // HTTP Status constants
 const HTTP_STATUS = {
@@ -16,6 +17,7 @@ export interface CartController {
   addItem(_req: Request, _res: Response): Promise<void>
   getCart(_req: Request, _res: Response): Promise<void>
   checkout(_req: Request, _res: Response): Promise<void>
+  removeItem(_req: Request, _res: Response): Promise<void>
 }
 
 // Helper function to handle common error responses
@@ -65,11 +67,12 @@ export const createCartController = (repository: InMemoryCartRepository): CartCo
   const addItemUseCase = createAddItemToCartUseCase(repository)
   const getCartUseCase = createGetCartUseCase(repository)
   const checkoutUseCase = createCheckoutCartUseCase(repository)
+  const removeItemUseCase = createRemoveItemFromCartUseCase(repository)
 
   return {
     async addItem(req: Request, res: Response): Promise<void> {
       try {
-        const { cartId } = req.params
+        const { sessionId } = req.params
         const validationError = validateAddItemRequest(req.body)
 
         if (validationError) {
@@ -79,7 +82,7 @@ export const createCartController = (repository: InMemoryCartRepository): CartCo
 
         const { productId, quantity, unitPrice } = req.body
         const result = await addItemUseCase({
-          cartId,
+          cartId: sessionId,
           productId,
           quantity,
           unitPrice: unitPrice.amount,
@@ -101,8 +104,8 @@ export const createCartController = (repository: InMemoryCartRepository): CartCo
 
     async getCart(req: Request, res: Response): Promise<void> {
       try {
-        const { cartId } = req.params
-        const result = await getCartUseCase({ cartId })
+        const { sessionId } = req.params
+        const result = await getCartUseCase({ cartId: sessionId })
 
         if (result.success) {
           res.status(HTTP_STATUS.OK).json(result.cart)
@@ -118,8 +121,8 @@ export const createCartController = (repository: InMemoryCartRepository): CartCo
 
     async checkout(req: Request, res: Response): Promise<void> {
       try {
-        const { cartId } = req.params
-        const result = await checkoutUseCase({ cartId })
+        const { sessionId } = req.params
+        const result = await checkoutUseCase({ cartId: sessionId })
 
         if (result.success) {
           res.status(HTTP_STATUS.OK).json({
@@ -134,6 +137,37 @@ export const createCartController = (repository: InMemoryCartRepository): CartCo
         handleError(res, result.error || 'Unknown error', isNotFound)
       } catch (error) {
         handleServerError(res, error, 'checkout')
+      }
+    },
+
+    async removeItem(req: Request, res: Response): Promise<void> {
+      try {
+        const { sessionId, itemId } = req.params
+
+        if (!sessionId || !itemId) {
+          res.status(HTTP_STATUS.BAD_REQUEST).json({
+            error: 'Session ID and item ID are required'
+          })
+          return
+        }
+
+        const result = await removeItemUseCase({
+          sessionId,
+          itemId
+        })
+
+        if (result.success) {
+          res.status(HTTP_STATUS.OK).json({
+            message: 'Item removed successfully',
+            cart: result.cart
+          })
+          return
+        }
+
+        const isNotFound = result.error === 'Cart not found' || result.error === 'Item not found in cart'
+        handleError(res, result.error || 'Unknown error', isNotFound)
+      } catch (error) {
+        handleServerError(res, error, 'removeItem')
       }
     }
   }

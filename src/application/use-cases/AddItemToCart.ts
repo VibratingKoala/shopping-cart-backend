@@ -30,9 +30,7 @@ export const createAddItemToCartUseCase = (cartRepository: CartRepository) => {
 
       // Get or create cart
       let cart = await cartRepository.findById(request.cartId)
-      if (!cart) {
-        cart = createCart(request.cartId)
-      }
+      cart ??= createCart(request.cartId)
 
       // Create cart item
       const productId = createProductId(request.productId)
