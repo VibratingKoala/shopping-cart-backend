@@ -132,7 +132,14 @@ if (amount < 0) {
 
 ## Domain Events (Future Enhancement)
 
-**Current State**: Not implemented but designed for
+**Current State**: Not implemented but domain errors are well-defined
+**Domain Errors Implemented**:
+- InvalidQuantityError
+- InvalidPriceError
+- CurrencyMismatchError
+- EmptyCartCheckoutError
+- ItemNotFoundError
+
 **Potential Events**:
 - ItemAddedToCart
 - ItemRemovedFromCart
@@ -168,8 +175,9 @@ if (amount < 0) {
 
 ### Coverage Achieved
 - **55 tests** covering all business logic
-- **70%+ domain coverage** exceeding standard requirements
+- **90%+ domain coverage** on critical business components
 - **Test Placement**: Tests alongside source files (*.spec.ts)
+- **Test Structure**: Unit tests for domain, integration tests for use cases
 
 ## Future Domain Considerations
 
@@ -192,10 +200,11 @@ if (amount < 0) {
 ## Domain Language Alignment
 
 The domain model uses ubiquitous language from the business:
-- **Session**: User shopping session (not cartId)
+- **Session**: User shopping session (sessionId in API)
 - **Items**: Products added to cart
 - **Checkout**: Convert cart to order
 - **Money**: Monetary amounts with currency
 - **Quantity**: Number of identical products
+- **Remove**: Delete items from cart (DELETE endpoint)
 
-This language is consistent across domain models, use cases, and API interfaces, ensuring clear communication between technical and business stakeholders.
+This language is consistent across domain models, use cases, API interfaces, and documentation, ensuring clear communication between technical and business stakeholders.

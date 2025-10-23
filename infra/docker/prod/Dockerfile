@@ -18,4 +18,4 @@ COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --chown=nodejs:nodejs package.json ./
 USER nodejs
 EXPOSE 3000
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/infrastructure/server.js"]

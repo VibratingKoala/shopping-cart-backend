@@ -20,9 +20,10 @@ try {
     console.log('Shopping Cart API server running on port', PORT)
     console.log('Health check: http://localhost:' + PORT + '/health')
     console.log('API endpoints:')
-    console.log('  POST /api/carts/:cartId/items - Add item to cart')
-    console.log('  GET  /api/carts/:cartId - Get cart')
-    console.log('  POST /api/carts/:cartId/checkout - Checkout cart')
+    console.log('  POST /api/cart/:sessionId/items - Add item to cart')
+    console.log('  GET  /api/cart/:sessionId - Get cart')
+    console.log('  POST /api/cart/:sessionId/checkout - Checkout cart')
+    console.log('  DELETE /api/cart/:sessionId/items/:itemId - Remove item from cart')
   })
 
   server.on('error', (error: Error) => {

@@ -10,46 +10,67 @@ This shopping cart API uses **Clean Architecture** patterns, organizing code in 
 src/
 ├── domain/              # Core Business Rules
 │   ├── entities/        # Business objects (Cart, CartItem)
-│   └── value-objects/   # Value types (Money, ProductId)
-├── application/         # Application Business Rules  
-│   ├── use-cases/       # Business workflows
-│   └── ports/           # Interface definitions
-└── infrastructure/      # Interface Adapters & Frameworks
-    ├── repositories/    # Data persistence
-    └── web/            # HTTP API controllers
+│   ├── value-objects/   # Value types (Money, ProductId)
+│   ├── repositories/    # Repository interfaces (ports)
+│   └── errors/          # Domain-specific errors
+├── usecases/            # Application Business Rules  
+│   └── *.ts            # Business workflows (AddItemToCart, etc.)
+├── adapters/            # Interface Adapters
+│   ├── controllers/     # HTTP request handlers
+│   └── repositories/    # Repository implementations
+└── infrastructure/      # Frameworks & Drivers
+    ├── server.ts        # Application entry point
+    ├── routes.ts        # Route definitions
+    ├── app.ts          # Express app configuration
+    └── storage/         # Storage configuration
 ```
 
 ## Dependency Rule
 
 Dependencies point **inward only**:
-- `Infrastructure` → `Application` → `Domain`
+- `Infrastructure` → `Adapters` → `UseCases` → `Domain`
 - Domain layer has **zero external dependencies**
-- Use cases define interfaces (ports) that infrastructure implements
+- Domain defines repository interfaces that adapters implement
 
 ## Application Flow
 
 ```
-HTTP Request → Controller → Use Case → Repository → Domain Logic
-                   ↓           ↓          ↓           ↓
-                Response ← JSON ← Result ← Entity ← Business Rules
+HTTP Request → Controller → Use Case → Domain Entity → Repository Interface
+                   ↓           ↓          ↓              ↓
+                Response ← JSON ← Result ← Business Rules ← Repository Implementation
 ```
 
 ## Component Interactions
 
-### 1. Web Layer (Infrastructure)
+### 1. Infrastructure Layer
 ```typescript
-// Express controllers handle HTTP concerns
-app.post('/api/carts/:cartId/items', cartController.addItem)
+// Express app and route setup
+app.post('/api/cart/:sessionId/items', cartController.addItem)
 ```
-- Input validation and sanitization
-- HTTP status code mapping
-- JSON serialization/deserialization
-- CORS and middleware handling
+- Application server setup and configuration
+- Route definitions and middleware
+- Storage configuration
 
-### 2. Use Case Layer (Application)
+### 2. Adapters Layer
+```typescript
+// Controllers handle HTTP concerns
+export const createCartController = (repository: CartRepository) => {
+  // HTTP request/response handling
+}
+
+// Repository implementations
+export class InMemoryCartRepository implements CartRepository {
+  // Data persistence logic
+}
+```
+- HTTP controllers for request/response handling
+- Repository implementations for data persistence
+- Input validation and serialization
+
+### 3. Use Cases Layer
 ```typescript
 // Pure business orchestration
-const createAddItemToCartUseCase = (repository: CartRepository) => {
+export const createAddItemToCartUseCase = (repository: CartRepository) => {
   return async (request: AddItemToCartRequest): Promise<AddItemToCartResponse> => {
     // Coordinate domain objects and repository
   }
@@ -76,17 +97,24 @@ export const addItemToCart = (cart: Cart, item: CartItem): Cart => {
 
 ### Dependency Injection
 ```typescript
-// Use cases receive dependencies through constructor injection
+// Dependencies injected through factory functions
 const cartRepository = new InMemoryCartRepository()
 const addItemUseCase = createAddItemToCartUseCase(cartRepository)
+const cartController = createCartController(cartRepository)
 ```
 
 ### Repository Pattern
 ```typescript
+// Repository interface defined in domain layer
 interface CartRepository {
   save(cart: Cart): Promise<void>
   findById(id: string): Promise<Cart | null>
   delete(id: string): Promise<void>
+}
+
+// Implementation in adapters layer
+class InMemoryCartRepository implements CartRepository {
+  // Implementation details
 }
 ```
 - Abstracts data persistence
@@ -199,13 +227,14 @@ Single Container → ECS Service → ECS with Auto Scaling → Multi-AZ Deployme
 - Error tracking (Sentry)
 - Performance monitoring (DataDog/New Relic)
 
-## API Design Principles
+### API Design Principles
 
 ### RESTful Design
 ```
-POST /api/carts/{cartId}/items     # Add item
-GET  /api/carts/{cartId}           # Get cart
-POST /api/carts/{cartId}/checkout  # Checkout
+POST /api/cart/{sessionId}/items          # Add item
+GET  /api/cart/{sessionId}                # Get cart
+POST /api/cart/{sessionId}/checkout       # Checkout
+DELETE /api/cart/{sessionId}/items/{itemId} # Remove item
 ```
 
 ### Response Consistency
@@ -241,15 +270,16 @@ Unit Tests (Domain logic)          ←  Many, fast
 
 ### Local Development
 ```bash
-npm run dev        # Start with hot reload
-npm test           # Run unit tests
-npm run test:coverage  # Coverage report
+npm run dev               # Start with hot reload
+npm test                  # Run unit tests
+npm run test:coverage     # Coverage report
+.\test-quick.ps1         # Test API endpoints
 ```
 
 ### Quality Gates
 - TypeScript compilation
 - ESLint checks
-- Test suite (49 tests)
+- Test suite (55 tests)
 - Coverage thresholds (70%+)
 
 ## Trade-offs and Technical Debt
