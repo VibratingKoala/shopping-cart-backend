@@ -1,5 +1,5 @@
-import { calculateCartTotal, isCartEmpty } from '../../domain/entities/Cart'
-import { CartRepository } from '../ports/CartRepository'
+import { calculateCartTotal, isCartEmpty } from '../domain/entities/Cart'
+import { CartRepository } from '../domain/repositories/CartRepository'
 
 export type CheckoutCartRequest = {
   cartId: string

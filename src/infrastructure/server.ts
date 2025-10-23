@@ -1,4 +1,4 @@
-import { createApp } from './infrastructure/web/app'
+import { createApp } from './app'
 
 const PORT = process.env.PORT || 3000
 
@@ -25,7 +25,7 @@ try {
     console.log('  POST /api/carts/:cartId/checkout - Checkout cart')
   })
 
-  server.on('error', (error) => {
+  server.on('error', (error: Error) => {
     console.error('Server error:', error)
     process.exit(1)
   })

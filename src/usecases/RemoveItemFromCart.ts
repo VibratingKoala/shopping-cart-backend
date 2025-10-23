@@ -1,6 +1,6 @@
-import { CartRepository } from '../ports/CartRepository'
-import { removeItemFromCart } from '../../domain/entities/Cart'
-import { createProductId } from '../../domain/value-objects/ProductId'
+import { CartRepository } from '../domain/repositories/CartRepository'
+import { removeItemFromCart } from '../domain/entities/Cart'
+import { createProductId } from '../domain/value-objects/ProductId'
 
 export type RemoveItemFromCartRequest = {
   sessionId: string
@@ -9,7 +9,7 @@ export type RemoveItemFromCartRequest = {
 
 export type RemoveItemFromCartResponse = {
   success: boolean
-  cart?: import('../../domain/entities/Cart').Cart
+  cart?: import('../domain/entities/Cart').Cart
   error?: string
 }
 

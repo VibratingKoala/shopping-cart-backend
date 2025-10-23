@@ -1,6 +1,5 @@
 import express from 'express'
-import { createCartController } from './CartController'
-import { InMemoryCartRepository } from '../repositories/InMemoryCartRepository'
+import { createRoutes } from './routes'
 
 export const createApp = () => {
   const app = express()
@@ -21,20 +20,8 @@ export const createApp = () => {
     }
   })
 
-  // Initialize dependencies
-  const cartRepository = new InMemoryCartRepository()
-  const cartController = createCartController(cartRepository)
-
-  // Health check endpoint
-  app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() })
-  })
-
-  // Cart API routes
-  app.post('/api/cart/:sessionId/items', cartController.addItem)
-  app.get('/api/cart/:sessionId', cartController.getCart)
-  app.post('/api/cart/:sessionId/checkout', cartController.checkout)
-  app.delete('/api/cart/:sessionId/items/:itemId', cartController.removeItem)
+  // Routes
+  app.use(createRoutes())
 
   // Error handling middleware
   app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {

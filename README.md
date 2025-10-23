@@ -1,18 +1,18 @@
 # Shopping Cart Backend API
 
-A TypeScript REST API for managing shopping carts, built with clean architecture principles and modern development practices. Features thorough testing, domain-driven design, and production-ready infrastructure automation.
+A REST API for managing shopping carts built with TypeScript and clean architecture. This project implements a traditional e-commerce cart system with proper domain modeling and production-ready infrastructure.
 
-## ✨ Key Features
+## ✨ Features
 
-- **Clean Architecture**: Strict separation of concerns with dependency inversion
-- **Domain-Driven Design**: Rich domain models with enforced business rules
-- **Thorough Testing**: 55+ tests covering business logic and integrations
-- **Production Ready**: Docker containers, CI/CD pipelines, and AWS infrastructure
-- **Type Safety**: Full TypeScript implementation with strict mode enabled
+- **Clean Architecture**: Business logic separated from framework concerns
+- **Domain-Driven Design**: Core business rules enforced through rich domain models  
+- **Comprehensive Testing**: 55+ tests covering all critical functionality
+- **Production Ready**: Docker setup, CI/CD pipelines, and cloud infrastructure
+- **Type Safety**: Strict TypeScript with comprehensive type checking
 
 ## 📡 API Endpoints
 
-### Base URL: `http://localhost:3000`
+The API runs on `http://localhost:3000` by default.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -22,7 +22,7 @@ A TypeScript REST API for managing shopping carts, built with clean architecture
 | POST | `/api/cart/:sessionId/checkout` | Checkout cart |
 | DELETE | `/api/cart/:sessionId/items/:itemId` | Remove item from cart |
 
-### Example Usage
+### Usage Examples
 
 **Add item to cart:**
 ```bash
@@ -45,48 +45,55 @@ curl -X DELETE http://localhost:3000/api/cart/session-123/items/product-456
 
 ## 🏗️ Architecture
 
-### Domain Layer (`src/domain/`)
-- **Value Objects**: `Money`, `ProductId` - Immutable objects with validation
-- **Entities**: `Cart`, `CartItem` - Business logic and rules
-- **Business Rules**: Quantity validation, currency matching, total calculations
+This project follows clean architecture principles with clear separation between layers:
 
-### Application Layer (`src/application/`)
-- **Use Cases**: `AddItemToCart`, `GetCart`, `CheckoutCart` - Application logic
-- **Ports**: `CartRepository` - Interfaces for external dependencies
+### Domain Layer (`src/domain/`)
+Core business logic and rules:
+- **Entities**: `Cart`, `CartItem` - Main business objects
+- **Value Objects**: `Money`, `ProductId` - Immutable objects with validation
+- **Repositories**: Interface definitions for data access
+- **Errors**: Business-specific error types
+
+### Use Cases Layer (`src/usecases/`)
+Application-specific business rules:
+- `AddItemToCart`, `GetCart`, `CheckoutCart`, `RemoveItemFromCart`
+
+### Adapters Layer (`src/adapters/`)
+Interface adapters that connect the use cases to external concerns:
+- **Controllers**: HTTP request/response handling
+- **Repositories**: Data persistence implementations
 
 ### Infrastructure Layer (`src/infrastructure/`)
-- **Repositories**: `InMemoryCartRepository` - Data persistence
-- **Web**: Express.js controllers and API setup
+Framework and external tool configurations:
+- **Server**: Express.js application setup
+- **Routes**: HTTP routing configuration
+- **Storage**: Data storage setup
 
 ## 🧪 Testing
 
-The project includes solid test coverage:
+Run the test suite to verify everything works:
 
 ```bash
 # Run all tests
 npm test
 
-# Run tests with coverage report
+# Run with coverage report
 npm run test:coverage
 
-# Test API endpoints (requires server running)
+# Test API endpoints (server must be running)
 .\test-quick.ps1
 ```
 
-**Test Coverage:**
-- **55 tests** covering domain logic and business rules
-- **70%+ coverage** on critical business components
-- **Integration tests** for API endpoints and repository interactions
-- Test files use the pattern `*.spec.ts` alongside source code for maintainability
+The project has 55 tests covering the core business logic, API endpoints, and integrations. Tests are co-located with source files using the `*.spec.ts` pattern.
 
 ## 🐋 Docker
 
 ### Development
 ```bash
-# Build and run development container
+# Run with docker-compose
 docker-compose -f infra/docker/dev/docker-compose.yml up
 
-# Or build development image manually
+# Or build manually
 docker build -f infra/docker/dev/Dockerfile -t shopping-cart-dev .
 docker run -p 3000:3000 -v $(pwd)/src:/app/src shopping-cart-dev
 ```
@@ -104,33 +111,28 @@ docker run -p 3000:3000 shopping-cart-api
 
 ### AWS Infrastructure
 
-The project includes complete Terraform configuration for AWS deployment:
+The `infra/terraform` directory contains infrastructure-as-code for AWS deployment:
 
-- **VPC** with public/private subnets
-- **Application Load Balancer** with health checks
-- **ECS Fargate** cluster and service
-- **CloudWatch** logging
-- **Security Groups** with least privilege access
+- VPC with public/private subnets across multiple AZs
+- Application Load Balancer with health checks  
+- ECS Fargate cluster for container orchestration
+- CloudWatch logging and monitoring
+- Security groups following least privilege principles
 
 ```bash
 cd infra/terraform
-
-# Initialize Terraform
 terraform init
-
-# Plan deployment
 terraform plan
-
-# Deploy infrastructure
 terraform apply
 ```
 
-### CI/CD Pipeline
+### CI/CD
 
-Automated workflows handle:
-- **Code Quality**: Testing, linting, and security scanning
-- **Deployment**: Docker image building and infrastructure management
-- **Integration**: Automatic validation on pull requests and main branch updates
+GitHub Actions handles automated testing, building, and deployment:
+- Runs tests and linting on every push
+- Builds and validates Docker images
+- Performs security scanning
+- Deploys to AWS on main branch updates
 
 ## 📁 Project Structure
 
@@ -139,19 +141,22 @@ shopping-cart-backend/
 ├── src/
 │   ├── domain/
 │   │   ├── entities/           # Cart, CartItem
-│   │   └── value-objects/      # Money, ProductId
-│   ├── application/
-│   │   ├── ports/              # Repository interfaces
-│   │   └── use-cases/          # Business use cases
-│   ├── infrastructure/
-│   │   ├── repositories/       # Data persistence
-│   │   └── web/               # Express API
-│   └── server.ts              # Application entry point
+│   │   ├── value-objects/      # Money, ProductId  
+│   │   ├── repositories/       # Repository interfaces
+│   │   └── errors/             # Domain error types
+│   ├── usecases/              # Business use cases
+│   ├── adapters/
+│   │   ├── controllers/        # HTTP controllers
+│   │   └── repositories/       # Data persistence
+│   └── infrastructure/
+│       ├── server.ts          # Application entry point
+│       ├── routes.ts          # Route definitions
+│       └── storage/           # Storage configuration
 ├── infra/
 │   ├── docker/                # Docker configurations
 │   └── terraform/             # Infrastructure as Code
 ├── .github/workflows/         # CI/CD pipelines
-└── tests covering 70%+          # Full test suite
+└── test-quick.ps1            # API testing script
 ```
 
 ## 🔧 Development Setup
@@ -163,57 +168,41 @@ shopping-cart-backend/
 | `NODE_ENV` | Runtime environment | `development` |
 | `PORT` | Server port | `3000` |
 
-### Code Quality Tools
+### Getting Started
 
-The project maintains high code quality with:
-- ESLint with TypeScript-specific rules
-- Prettier for consistent code formatting
-- Pre-commit hooks for automated validation
+1. Install dependencies: `npm install`
+2. Run tests: `npm test`
+3. Start development server: `npm run dev`
+4. Test API endpoints: `.\test-quick.ps1`
 
-## 🔄 Development Workflow
+The project uses ESLint and Prettier for code quality and consistent formatting.
 
-1. **Branch creation**: `git checkout -b feature/feature-name`
-2. **Test-driven development**: Write tests before implementation
-3. **Implementation**: Follow clean architecture principles
-4. **Quality assurance**: `npm run lint && npm test`
-5. **Pull request**: Automated validation via CI pipeline
-6. **Deployment**: Automatic deployment on merge to main
+## 🏛️ Design Decisions
 
-## 🏛️ Architecture & Design Decisions
+### Architecture Principles
+- **Dependency Inversion**: Business logic doesn't depend on external frameworks
+- **Immutability**: Data structures are immutable to prevent unexpected side effects  
+- **Type Safety**: Strict TypeScript configuration catches errors at compile time
+- **Testability**: Architecture supports comprehensive unit and integration testing
 
-### Core Principles
+### Current Implementation
+- **Storage**: In-memory persistence (easily replaceable via repository pattern)
+- **Security**: Session-based cart access (ready for authentication layer)
+- **Currency**: USD only (designed for multi-currency extension)
+- **Validation**: Core business rules with room for complex scenarios
 
-**Clean Architecture**: Business logic remains independent of external frameworks and databases
-**Immutable Operations**: All data modifications return new instances, preventing side effects
-**Functional Style**: Factory functions preferred over classes for simpler composition
-**Type Safety**: Strict TypeScript configuration catches errors at compile time
+### Production Considerations
+- **Security**: Non-root Docker containers and security scanning
+- **Scalability**: AWS ECS with auto-scaling capabilities
+- **Observability**: Health checks and structured logging
+- **Automation**: Full CI/CD pipeline with quality gates
 
-### Current Scope
-- **Storage**: In-memory persistence (easily swappable via repository pattern)
-- **Security**: Public cart access (ready for authentication layer)
-- **Currency**: USD support (extensible to multiple currencies)
-- **Validation**: Core business rules (expandable for complex scenarios)
-
-### Production Features
-- **Container Security**: Multi-stage Docker builds with non-root execution
-- **Cloud Infrastructure**: Scalable AWS ECS with load balancing
-- **Automation**: Full CI/CD pipeline with testing and deployment
-- **Observability**: Health checks and structured logging integration
-
-### Growth Path
-- **Database**: PostgreSQL replacement for in-memory storage
-- **Authentication**: JWT-based user sessions and cart ownership
-- **Catalog Integration**: External product service connectivity
-- **Enhanced Features**: Inventory management, promotions, tax calculations
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Write tests for your changes
-4. Ensure all tests pass
-5. Submit a pull request
+### Future Enhancements
+- Replace in-memory storage with PostgreSQL
+- Add user authentication and cart ownership
+- Integrate with external product catalog
+- Add inventory management and promotions
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License

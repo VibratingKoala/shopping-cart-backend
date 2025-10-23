@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { InMemoryCartRepository } from '../repositories/InMemoryCartRepository'
-import { createAddItemToCartUseCase } from '../../application/use-cases/AddItemToCart'
-import { createGetCartUseCase } from '../../application/use-cases/GetCart'
-import { createCheckoutCartUseCase } from '../../application/use-cases/CheckoutCart'
-import { createRemoveItemFromCartUseCase } from '../../application/use-cases/RemoveItemFromCart'
+import { createAddItemToCartUseCase } from '../../usecases/AddItemToCart'
+import { createGetCartUseCase } from '../../usecases/GetCart'
+import { createCheckoutCartUseCase } from '../../usecases/CheckoutCart'
+import { createRemoveItemFromCartUseCase } from '../../usecases/RemoveItemFromCart'
 
 // HTTP Status constants
 const HTTP_STATUS = {

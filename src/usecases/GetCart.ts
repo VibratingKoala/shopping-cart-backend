@@ -1,5 +1,5 @@
-import { Cart } from '../../domain/entities/Cart'
-import { CartRepository } from '../ports/CartRepository'
+import { Cart } from '../domain/entities/Cart'
+import { CartRepository } from '../domain/repositories/CartRepository'
 
 export type GetCartRequest = {
   cartId: string
@@ -25,7 +25,7 @@ export const createGetCartUseCase = (cartRepository: CartRepository) => {
 
       if (!cart) {
         // Create an empty cart if it doesn't exist
-        const { createCart } = await import('../../domain/entities/Cart')
+        const { createCart } = await import('../domain/entities/Cart')
         cart = createCart(request.cartId)
         await cartRepository.save(cart)
       }

@@ -7,9 +7,9 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "lint": "eslint . --ext .ts",
-    "start": "node dist/server.js",
-    "dev": "ts-node src/server.ts",
-    "dev:watch": "ts-node --watch src/server.ts"
+    "start": "node dist/infrastructure/server.js",
+    "dev": "ts-node src/infrastructure/server.ts",
+    "dev:watch": "ts-node --watch src/infrastructure/server.ts"
   },
   "dependencies": {
     "express": "^4.18.2"

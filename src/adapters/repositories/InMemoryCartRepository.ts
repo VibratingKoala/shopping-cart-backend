@@ -1,5 +1,5 @@
 import { Cart } from '../../domain/entities/Cart'
-import { CartRepository } from '../../application/ports/CartRepository'
+import { CartRepository } from '../../domain/repositories/CartRepository'
 
 export class InMemoryCartRepository implements CartRepository {
   private readonly carts = new Map<string, Cart>()

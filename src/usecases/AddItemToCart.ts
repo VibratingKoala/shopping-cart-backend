@@ -1,7 +1,8 @@
-import { Cart, createCart, addItemToCart, createCartItem } from '../../domain/entities/Cart'
-import { createProductId } from '../../domain/value-objects/ProductId'
-import { createMoney } from '../../domain/value-objects/Money'
-import { CartRepository } from '../ports/CartRepository'
+
+import { Cart, createCart, addItemToCart, createCartItem } from '../domain/entities/Cart'
+import { createProductId } from '../domain/value-objects/ProductId'
+import { createMoney } from '../domain/value-objects/Money'
+import { CartRepository } from '../domain/repositories/CartRepository'
 
 export type AddItemToCartRequest = {
   cartId: string

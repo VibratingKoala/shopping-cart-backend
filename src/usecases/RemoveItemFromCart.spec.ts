@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { createRemoveItemFromCartUseCase } from './RemoveItemFromCart'
 import { createAddItemToCartUseCase } from './AddItemToCart'
-import { CartRepository } from '../ports/CartRepository'
-import { Cart, createCart } from '../../domain/entities/Cart'
+import { CartRepository } from '../domain/repositories/CartRepository'
+import { Cart, createCart } from '../domain/entities/Cart'
 
 // Mock repository for testing
 class MockCartRepository implements CartRepository {
