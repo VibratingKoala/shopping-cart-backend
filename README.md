@@ -70,7 +70,7 @@ npm test
 npm run test:coverage
 
 # Test API endpoints (requires server running)
-.\test-api-simple.ps1
+.\test-quick.ps1
 ```
 
 **Test Coverage:**
@@ -170,7 +170,7 @@ The project maintains high code quality with:
 - Prettier for consistent code formatting
 - Pre-commit hooks for automated validation
 
-## � Development Workflow
+## 🔄 Development Workflow
 
 1. **Branch creation**: `git checkout -b feature/feature-name`
 2. **Test-driven development**: Write tests before implementation
@@ -179,7 +179,7 @@ The project maintains high code quality with:
 5. **Pull request**: Automated validation via CI pipeline
 6. **Deployment**: Automatic deployment on merge to main
 
-## � Architecture & Design Decisions
+## 🏛️ Architecture & Design Decisions
 
 ### Core Principles
 
